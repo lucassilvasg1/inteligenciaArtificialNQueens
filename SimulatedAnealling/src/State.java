@@ -31,12 +31,21 @@ class State
       cost = 0;
    }
 
-   public State getNextState()
+   public State getNextState(State state)
    {
       int i;
       Queen nextStateQueen[] = new Queen[boardSize];
-
-      int rand = randomGenerator.nextInt(boardSize);
+      
+      State newGame = new State(state.boardSize, state.q);
+      
+      int col1 = randomGenerator.nextInt(boardSize);
+      int col2 = randomGenerator.nextInt(boardSize);
+      
+      Queen linha2  = newGame.q[col2];
+      newGame.q[col2] = newGame.q[col1];
+      newGame.q[col1] = linha2;
+      
+  /*    int rand = randomGenerator.nextInt(boardSize);
 
       for (i = 0; i < boardSize; i++)
       {
@@ -53,8 +62,8 @@ class State
 
             nextStateQueen[i] = new Queen(q[i].getIndexOfX(), temp);
          }
-      }
-      return new State(boardSize, nextStateQueen);
+      } */
+      return newGame;
    }
 
    public void calculateCost()
@@ -64,7 +73,7 @@ class State
 
       for (i = 0; i < boardSize; i++)
       {
-         for (j = 0; j < boardSize; j++)
+         for (j = i+1; j < boardSize; j++)
          {
             if (q[i].getIndexOfX() == q[j].getIndexOfX()
                 || q[i].getIndexOfY() == q[j].getIndexOfY()
@@ -75,7 +84,6 @@ class State
             }
          }
       }
-      cost = cost / 2;
    }
 
    public int getCost()

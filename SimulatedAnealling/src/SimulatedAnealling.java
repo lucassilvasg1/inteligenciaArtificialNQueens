@@ -1,20 +1,19 @@
-class SimulatedAnnealing {
+class SimulatedAnealling
+{
 
-   public static void main(String[] args) 
+   public static void main(String[] args)
    {
-      NQueen nq = new NQueen(7);
+      NQueen nq = new NQueen(40);
       int i = 1;
-      do {
-         System.out.println("Solution: "+i);
+      while (!nq.reachResult())
+      {
+         System.out.println("Solution: " + i);
          nq.solve();
          nq.show();
          System.out.println("");
          i++;
-      }while(!nq.reachResult());
+      }
 
-      //        for(int i = 1; i <= 12; i++){
-      //        
-      //        }
    }
 
 }
