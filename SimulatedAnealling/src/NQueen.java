@@ -119,6 +119,7 @@ class NQueen
          System.out.println("|");
       }
    }
+   
 
    public boolean reachResult()
    {
@@ -215,6 +216,7 @@ class NQueen
 	   for (int i = 0; i < novoJogo.length; i++) {
 		   novo.add(new Integer(novoJogo[i]));
 	   }
+	   
 	   return novo;
    }
    

@@ -1,4 +1,8 @@
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
+
+import sun.security.util.ArrayUtil;
 
 class State
 {
@@ -27,15 +31,12 @@ class State
    public State(int boardSize, Queen q[])
    {
       this.boardSize = boardSize;
-      this.q = q;
+      this.q =  Arrays.copyOf(q, q.length);
       cost = 0;
    }
 
    public State getNextState(State state)
    {
-      int i;
-      Queen nextStateQueen[] = new Queen[boardSize];
-      
       State newGame = new State(state.boardSize, state.q);
       
       int col1 = randomGenerator.nextInt(boardSize);
@@ -85,6 +86,29 @@ class State
          }
       }
    }
+   
+   public void heuristica()
+   {
+       int dimensao = boardSize;
+       cost = 0;
+       for(int i=0; i < dimensao; i++ )
+       {
+           for(int j= i+1; j < dimensao; j++)
+           {
+               int[] posi = {i, q[i].getIndexOfX()};
+               int[] posj = {j, q[j].getIndexOfY()};
+               
+               int[] delta = {Math.abs(posi[0] - posj[0]),Math.abs(posi[1] - posj[1])};
+               
+               if(delta[0] == delta[1] || posi[0] == posj[0] || posi[1] == posj[1])
+               {
+                  cost += 1;
+               }
+           }
+       }
+       
+   }
+   
 
    public int getCost()
    {
@@ -95,5 +119,44 @@ class State
    public Queen[] getQueens()
    {
       return q;
+   }
+   
+   @Override
+   public String toString()
+   {
+      Integer temp = new Integer(0);
+      boolean queen = false;
+      StringBuilder sb = new StringBuilder();
+
+      for (int i = 0; i < boardSize; i++)
+      {
+         for (int j = 0; j < boardSize; j++)
+         {
+            for (int k = 0; k < boardSize; k++)
+            {
+               if (i == q[k].getIndexOfX() && j == q[k].getIndexOfY())
+               {
+                  queen = true;
+                  temp = new Integer(k);
+                  break;
+               }
+            }
+            if (queen)
+            {
+               String aux = "";
+               if (temp.intValue() < 10) aux = "0" + temp;
+               else
+                  aux = temp.toString();
+               sb.append("|" + aux);
+               queen = false;
+            }
+            else
+            {
+               sb.append("|__" );
+            }
+         }
+         sb.append("|" + "\n");
+      }
+      return sb.toString();
    }
 }
