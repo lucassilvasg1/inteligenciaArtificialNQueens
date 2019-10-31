@@ -1,9 +1,11 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.NavigableMap;
 import java.util.Random;
 import java.util.TreeMap;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -161,4 +163,93 @@ class NQueen
 
       return true;
    }
+   
+   public int heuristica(ArrayList<Integer> jogo)
+   {
+	   int peso = 0;
+	   
+	   int dimensao = jogo.size();
+	   
+	   for(int i=0; i < dimensao; i++ )
+	   {
+		   for(int j= i+1; j < dimensao; j++)
+		   {
+			   int[] posi = {i, jogo.get(i)};
+			   int[] posj = {j, jogo.get(j)};
+			   
+			   int[] delta = {Math.abs(posi[0] - posj[0]),Math.abs(posi[1] - posj[1])};
+			   
+			   if(delta[0] == delta[1] || posi[0] == posj[0] || posi[1] == posj[1])
+			   {
+				   peso += 1;
+			   }
+		   }
+	   }
+	   
+	   return peso;
+   }
+   
+   public ArrayList<Integer> movimentacaoRandomicaSmart(ArrayList<Integer> jogo)
+   {
+	   
+	   int[] jogoAntigo = new int[jogo.size()];
+	   
+	   for (int i = 0; i < jogoAntigo.length; i++) {
+		   jogoAntigo[i] = jogo.get(i).intValue();
+	   }
+	   
+	   int[] novoJogo = Arrays.copyOf(jogoAntigo, jogoAntigo.length);
+	   
+	   Random gerador = new Random();
+	   
+	   int dimensao = novoJogo.length;
+	   
+	   int coluna1 = gerador.nextInt(dimensao);
+	   
+	   int coluna2 = gerador.nextInt(dimensao);
+	   
+	   int linha2 = novoJogo[coluna2];
+	   
+	   novoJogo[coluna2] = novoJogo[coluna1];
+	   novoJogo[coluna1] = linha2;
+	   
+	   ArrayList<Integer> novo = new ArrayList<Integer>();
+	   
+	   for (int i = 0; i < novoJogo.length; i++) {
+		   novo.add(new Integer(novoJogo[i]));
+	   }
+	   return novo;
+   }
+   
+   public ArrayList<Integer> tabRandomico(int dimensao)
+   {
+	   List<Integer> auxiliar = new ArrayList<Integer>();
+	   for (int i = 0; i < dimensao; i++) {
+		   auxiliar.add(i);
+	   }
+	   
+	   List<Integer> passo = NQueen.pickNRandomElements(auxiliar, dimensao, ThreadLocalRandom.current());
+	   
+	   ArrayList<Integer> retorno = new ArrayList<Integer>();
+	   
+	   for (int i = 0; i < passo.size(); i++) {
+		   retorno.add(passo.get(i));
+	   }
+	   
+	   return retorno;
+   }
+   
+   public static <E> List<E> pickNRandomElements(List<E> list, int n, Random r) {
+	    int length = list.size();
+
+	    if (length < n) return null;
+
+	    //We don't need to shuffle the whole list
+	    for (int i = length - 1; i >= length - n; --i)
+	    {
+	        Collections.swap(list, i , r.nextInt(i + 1));
+	    }
+	    return list.subList(length - n, length);
+	}
+   
 }
