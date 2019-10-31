@@ -2,9 +2,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.NavigableMap;
 import java.util.Random;
-import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -12,11 +10,13 @@ public class SimulatedAnealling
 {
 
    static List<Integer> jogo;
+   
+   static Random gerador = new Random();
 
    public static void main(String[] args)
    {
 
-      jogo = IntStream.rangeClosed(0, 4).boxed().collect(Collectors.toList());
+      jogo = IntStream.rangeClosed(0, 39).boxed().collect(Collectors.toList());
 
       int i = 1;
       System.out.println("Solution: " + i);
@@ -50,20 +50,18 @@ public class SimulatedAnealling
 
       int[] novoJogo = Arrays.copyOf(jogoAntigo, jogoAntigo.length);
 
-      Random gerador = new Random();
-
       int dimensao = novoJogo.length;
 
       int coluna1 = gerador.nextInt(dimensao - 1);
 
       int coluna2 = gerador.nextInt(dimensao - 1);
-
+      
       int linha2 = novoJogo[coluna2];
 
       novoJogo[coluna2] = novoJogo[coluna1];
       novoJogo[coluna1] = linha2;
 
-      ArrayList<Integer> novo = new ArrayList<Integer>();
+      List<Integer> novo = new ArrayList<Integer>();
 
       for (int i = 0; i < novoJogo.length; i++)
       {
@@ -126,41 +124,8 @@ public class SimulatedAnealling
    public void solve()
    {
 
-      class RandomCollection<E>
-      {
-         private final NavigableMap<Double, E> map = new TreeMap<Double, E>();
-
-         private final Random random;
-
-         private double total = 0;
-
-         public RandomCollection()
-         {
-            this(new Random());
-         }
-
-         public RandomCollection(Random random)
-         {
-            this.random = random;
-         }
-
-         public RandomCollection<E> add(double weight, E result)
-         {
-            if (weight <= 0) return this;
-            total += weight;
-            map.put(total, result);
-            return this;
-         }
-
-         public E next()
-         {
-            double value = random.nextDouble() * total;
-            return map.higherEntry(value).getValue();
-         }
-      }
-
       double probability;
-
+      
       List<Integer> ta = IntStream.rangeClosed(1, 10000).boxed().collect(Collectors.toList());
       List<Double> T = new ArrayList<Double>();
 
@@ -184,16 +149,20 @@ public class SimulatedAnealling
             break;
          }
 
-         if (pesoAtual <= pesoVizinho)
+         probability = Math.exp(pesoAtual - pesoVizinho / t);
+         double rand = Math.random();
+         
+         if (pesoVizinho <= pesoAtual)
          {
             jogo = vizinho;
          }
-         else
+         else if(rand <= probability)
          {
-            probability = Math.exp(pesoAtual - pesoVizinho / t);
-            RandomCollection<List<Integer>> rc = new RandomCollection<List<Integer>>().add(probability, vizinho).add(1 - probability, jogo);
-            jogo = rc.next();
+            jogo = vizinho;
          }
+         
+         System.out.println("============================");
+         SimulatedAnealling.imprimir(jogo);
       }
 
    }
