@@ -50,10 +50,7 @@ class NQueen
          }
      }
       
-      double temperature;
-      double delta;
       double probability;
-      double rand;
       
       List<Integer> ta = IntStream.rangeClosed(1, 10000).boxed().collect(Collectors.toList());
       List<Double> T = new ArrayList<Double>();
@@ -72,7 +69,7 @@ class NQueen
             break;
          }
          
-         if(currentState.cost <= nextState.getCost())
+         if(currentState.getCost() <= nextState.getCost())
          {
             currentState = nextState;
          }
@@ -251,5 +248,44 @@ class NQueen
 	    }
 	    return list.subList(length - n, length);
 	}
+   
+   public static ArrayList<Integer> deepCopy(ArrayList<Integer> copiado)
+   {
+       int[] antigo = new int[copiado.size()];
+       
+       for (int i = 0; i < antigo.length; i++) {
+           antigo[i] = copiado.get(i).intValue();
+       }
+       
+       int[] novo = Arrays.copyOf(antigo, antigo.length);
+       
+       ArrayList<Integer> copia = new ArrayList<Integer>();
+       
+       for (int i = 0; i < novo.length; i++) {
+           copia.add(novo[i]);
+       }
+       
+       return copia;
+   }
+
+   public State getCurrentState()
+   {
+      return currentState;
+   }
+
+   public void setCurrentState(State currentState)
+   {
+      this.currentState = currentState;
+   }
+
+   public State getNextState()
+   {
+      return nextState;
+   }
+
+   public void setNextState(State nextState)
+   {
+      this.nextState = nextState;
+   }
    
 }
