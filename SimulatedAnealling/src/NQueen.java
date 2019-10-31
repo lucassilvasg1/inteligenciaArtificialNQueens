@@ -252,4 +252,23 @@ class NQueen
 	    return list.subList(length - n, length);
 	}
    
+   public static ArrayList<Integer> deepCopy(ArrayList<Integer> copiado)
+   {
+	   int[] antigo = new int[copiado.size()];
+	   
+	   for (int i = 0; i < antigo.length; i++) {
+		   antigo[i] = copiado.get(i).intValue();
+	   }
+	   
+	   int[] novo = Arrays.copyOf(antigo, antigo.length);
+	   
+	   ArrayList<Integer> copia = new ArrayList<Integer>();
+	   
+	   for (int i = 0; i < novo.length; i++) {
+		   copia.add(novo[i]);
+	   }
+	   
+	   return copia;
+   }
+   
 }
