@@ -113,6 +113,24 @@ public class AlgoritmoGenetico
 	        Collections.swap(list, i , r.nextInt(i + 1));
 	    }
 	    return list.subList(length - n, length);
-}
+   }
+   
+   public ArrayList<Integer> tabRandomico(int dimensao)
+   {
+	   List<Integer> auxiliar = new ArrayList<Integer>();
+	   for (int i = 0; i < dimensao; i++) {
+		   auxiliar.add(i);
+	   }
+	   
+	   List<Integer> passo = AlgoritmoGenetico.pickNRandomElements(auxiliar, dimensao, ThreadLocalRandom.current());
+	   
+	   ArrayList<Integer> retorno = new ArrayList<Integer>();
+	   
+	   for (int i = 0; i < passo.size(); i++) {
+		   retorno.add(passo.get(i));
+	   }
+	   
+	   return retorno;
+   }
    
 }
