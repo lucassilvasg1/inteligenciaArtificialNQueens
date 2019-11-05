@@ -1,9 +1,12 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.NavigableMap;
+import java.util.PriorityQueue;
 import java.util.Random;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ThreadLocalRandom;
@@ -12,11 +15,12 @@ import java.util.stream.IntStream;
 
 public class AlgoritmoGenetico
 {
-   Integer passado = null;
+   List<Peso> passado = null;
+   static int max = 1000;
    
    public static void main(String[] args)
    {
-      ArrayList<ArrayList<Integer>> pop = new ArrayList<ArrayList<Integer>>();
+      List<List<Integer>> pop = new ArrayList<List<Integer>>();
       
       for(int i=0; i < 10;i++)
       {
@@ -33,6 +37,22 @@ public class AlgoritmoGenetico
           
           pesosMapeados.add(p);
       }
+      
+      Collections.sort(pesosMapeados, new Comparator<Peso>()
+      {
+         @Override
+         public int compare(Peso o1, Peso o2)
+         {
+            // TODO Auto-generated method stub
+            return o1.getPeso().compareTo(o2.getPeso());
+         }
+      });
+      
+      AlgoritmoGenetico ag = new AlgoritmoGenetico();
+      
+     List<Integer> resposta = ag.solve(pop, max);
+     
+     System.out.println(resposta);
       
       
    }
@@ -63,17 +83,24 @@ public class AlgoritmoGenetico
    public static List<Integer> cruzamentoKratos(List<Integer> pai, List<Integer> mae)
    {
       List<Integer> f1 = IntStream.rangeClosed(0, pai.size()-1).boxed().collect(Collectors.toList());
-      
-      LambdaFunction alterado = (int x) -> x%2==0?mae.get(x):pai.get(x);
-      
-      List<Integer> retorno = new ArrayList<Integer>();
-      
-      for (int i = 0; i < f1.size(); i++)
+      try
       {
-         retorno.add(alterado.lambda(f1.get(i)));
+         LambdaFunction alterado = (int x) -> x%2==0?mae.get(x):pai.get(x);
+         List<Integer> retorno = new ArrayList<Integer>();
+         
+         for (int i = 0; i < f1.size(); i++)
+         {
+            retorno.add(alterado.lambda(f1.get(i)));
+         }
+         
+         return retorno;
+      }
+      catch (Exception e)
+      {
+         e.printStackTrace();
       }
       
-      return retorno;
+      return null;
    }
    
    public static List<Integer> cruzamentoSmart(List<Integer> pai, List<Integer> mae)
@@ -107,7 +134,7 @@ public class AlgoritmoGenetico
          {
             setFilho.remove(aux);
          }else{
-            f1.set(i, subArrayList.remove(subArrayList.size()-1));
+            f1.add(subArrayList.remove(subArrayList.size()-1));
          }
       }
       
@@ -184,18 +211,124 @@ public class AlgoritmoGenetico
       return peso;
    }
    
-   public void solve(List<List<Integer>> populacao) {
+   public List<Integer> solve(List<List<Integer>> populacao, int max) {
       int tam = populacao.size();
       
       //chave?
+      LambdaChave chave = (List<Integer> x) -> x.get(0);
       
       long pop_sobrev = Math.round(0.2*tam);
       
+      List<List<Integer>> pop = new ArrayList<List<Integer>>(populacao);
+      
+      List<Peso> p_map = new ArrayList<Peso>();
+      
+      List<Peso> ordem = new ArrayList<Peso>();
+      
       if(this.passado == null)
       {
+         for (int i = 0; i < pop.size(); i++)
+         {
+            Peso p = new Peso();
+            p.setPeso(AlgoritmoGenetico.heuristica(pop.get(i)));
+            p.setVetor(pop.get(i));
+            p_map.add(p);
+         }
+         
+         Collections.sort(p_map, new Comparator<Peso>()
+         {
+            @Override
+            public int compare(Peso o1, Peso o2)
+            {
+               // TODO Auto-generated method stub
+               return o1.getPeso().compareTo(o2.getPeso());
+            }
+         });
+                  
+         ordem = new ArrayList<Peso>(p_map);
+         
+      }else {
+         ordem = this.passado;
+      }
+      
+      PriorityQueue<Peso> pQueue = new PriorityQueue<Peso>(ordem.size(), new Comparator<Peso>()
+         {
+            @Override
+            public int compare(Peso o1, Peso o2)
+            {
+               // TODO Auto-generated method stub
+               return o1.getPeso().compareTo(o2.getPeso());
+            }
+         });
+      
+      for (int i = 0; i < max; i++)
+      {
+         pQueue.addAll(ordem);
+         
+         List<Peso> nova_pop = new ArrayList<Peso>();
+         
+         for (int j = 0; j < pop_sobrev; j++)
+         {
+            nova_pop.add(pQueue.remove());
+         }
+         
+         if(nova_pop.get(0).getPeso() == 0)
+         {
+            return nova_pop.get(0).getVetor();
+         }
+         
+         int[] range = new int[Math.round(populacao.size())];
+         
+         for (int j = 0; j < range.length; j++)
+         {
+            range[j] = j;
+         }
+         
+         List<Peso> filhos = new ArrayList<Peso>();
+         
+         for (int j = 0; j < range.length; j++)
+         {
+            Peso p = new Peso();
+            List<List<Integer>> proc = this.escolha(j, ordem);
+            filhos.add(this.procriacao(proc.get(0), proc.get(1)));       
+         }
+         
+         List<Peso> fusao = new ArrayList<Peso>();
+        
+         fusao.addAll(nova_pop);
+         fusao.addAll(filhos);
+         ordem = fusao;
          
       }
       
+      List<Peso> pesos = new ArrayList<Peso>(ordem);
+      
+      Collections.sort(pesos, new Comparator<Peso>()
+      {
+         @Override
+         public int compare(Peso o1, Peso o2)
+         {
+            return o1.getPeso().compareTo(o2.getPeso());
+         }
+      });
+      
+      while(true)
+      {
+         System.out.println("Peso" + pesos.get(0).getPeso() + "para o melhor indivíduo");
+         System.out.println("Continuar? (S/N)");
+         Scanner sc = new Scanner(System.in);
+         if(sc.next().toUpperCase().equalsIgnoreCase("S"))
+         {
+            sc.close();
+            passado = ordem;
+            return this.solve(populacao, max);
+         }
+         else
+         {
+            sc.close();
+            return pesos.get(0).getVetor();
+         }
+      }
    }
    
    public Peso procriacao(List<Integer> pai, List<Integer> mae)
@@ -209,33 +342,34 @@ public class AlgoritmoGenetico
       
       if(mutacao)
       {
-         Peso p = new Peso();
-         p.setPeso(AlgoritmoGenetico.heuristica(f1));
-         p.setVetor(f1);
-         
-         return p;
+         mutacao(f1);
       }
       
-      return null;
+      Peso p = new Peso();
+      p.setPeso(AlgoritmoGenetico.heuristica(f1));
+      p.setVetor(f1);
+      
+      return p;
+      
    }
    
-   public List<Integer> escolha(List<Integer> x, List<List<Integer>> y)
+   public List<List<Integer>> escolha(Integer x, List<Peso> y)
    {
-      List<Integer> escolha = new ArrayList<Integer>();
+      List<List<Integer>> escolha = new ArrayList<List<Integer>>();
       
       for (int i = 0; i < y.size(); i++)
       {
-         escolha.add(y.get(i).get(1));
+         escolha.add(y.get(i).getVetor());
       }
       
-      RandomCollection<Integer> rc = new RandomCollection<Integer>();
+      RandomCollection<List<Integer>> rc = new RandomCollection<List<Integer>>();
 
       for (int i = 0; i < escolha.size(); i++)
       {
-         rc.add(1/y.get(i).get(0), escolha.get(i));
+         rc.add(1.0/y.get(i).getPeso(), escolha.get(i));
       }
       
-      List<Integer> retorno = new ArrayList<Integer>();
+      List<List<Integer>> retorno = new ArrayList<List<Integer>>();
       
       retorno.add(rc.next());
       retorno.add(rc.next());

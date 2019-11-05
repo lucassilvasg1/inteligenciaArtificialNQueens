@@ -1,6 +1,7 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public interface LambdaChave
 {
-   public ArrayList<Integer> chave(int x);
+   public Integer chave(List<Integer> x);
 }
