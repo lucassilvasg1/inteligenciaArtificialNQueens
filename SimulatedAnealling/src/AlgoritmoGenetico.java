@@ -143,47 +143,47 @@ public class AlgoritmoGenetico
    
    public static void mutacao(List<Integer> jogo)
    {
-	   int dimensao = jogo.size();
-	   
-	   List<Integer> auxiliar = new ArrayList<Integer>();
-	   for (int i = 0; i < dimensao; i++) {
-		   auxiliar.add(i);
-	   }
-	   
-	   List<Integer> pecas = AlgoritmoGenetico.pickNRandomElements(auxiliar, 2, ThreadLocalRandom.current());
-	   
-	   jogo.set(pecas.get(1), pecas.get(0));
+       int dimensao = jogo.size();
+       
+       List<Integer> auxiliar = new ArrayList<Integer>();
+       for (int i = 0; i < dimensao; i++) {
+           auxiliar.add(i);
+       }
+       
+       List<Integer> pecas = AlgoritmoGenetico.pickNRandomElements(auxiliar, 2, ThreadLocalRandom.current());
+       
+       jogo.set(pecas.get(1), pecas.get(0));
    }
    
    public static <E> List<E> pickNRandomElements(List<E> list, int n, Random r) {
-	    int length = list.size();
+        int length = list.size();
 
-	    if (length < n) return null;
+        if (length < n) return null;
 
-	    //We don't need to shuffle the whole list
-	    for (int i = length - 1; i >= length - n; --i)
-	    {
-	        Collections.swap(list, i , r.nextInt(i + 1));
-	    }
-	    return list.subList(length - n, length);
+        //We don't need to shuffle the whole list
+        for (int i = length - 1; i >= length - n; --i)
+        {
+            Collections.swap(list, i , r.nextInt(i + 1));
+        }
+        return list.subList(length - n, length);
    }
    
    public static ArrayList<Integer> tabRandomico(int dimensao)
    {
-	   List<Integer> auxiliar = new ArrayList<Integer>();
-	   for (int i = 0; i < dimensao; i++) {
-		   auxiliar.add(i);
-	   }
-	   
-	   List<Integer> passo = AlgoritmoGenetico.pickNRandomElements(auxiliar, dimensao, ThreadLocalRandom.current());
-	   
-	   ArrayList<Integer> retorno = new ArrayList<Integer>();
-	   
-	   for (int i = 0; i < passo.size(); i++) {
-		   retorno.add(passo.get(i));
-	   }
-	   
-	   return retorno;
+       List<Integer> auxiliar = new ArrayList<Integer>();
+       for (int i = 0; i < dimensao; i++) {
+           auxiliar.add(i);
+       }
+       
+       List<Integer> passo = AlgoritmoGenetico.pickNRandomElements(auxiliar, dimensao, ThreadLocalRandom.current());
+       
+       ArrayList<Integer> retorno = new ArrayList<Integer>();
+       
+       for (int i = 0; i < passo.size(); i++) {
+           retorno.add(passo.get(i));
+       }
+       
+       return retorno;
    }
    
    public static int heuristica(List<Integer> jogo)
