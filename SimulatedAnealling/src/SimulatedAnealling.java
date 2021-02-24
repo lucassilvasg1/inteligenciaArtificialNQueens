@@ -15,7 +15,8 @@ public class SimulatedAnealling
 
    public static void main(String[] args)
    {
-
+      // a posicao é a linha e o valor é a coluna;
+      // nosso estado inicial é um tabuleiro de 40 rainhas na diagonal principal
       jogo = IntStream.rangeClosed(0, 39).boxed().collect(Collectors.toList());
 
       int i = 1;
@@ -83,9 +84,9 @@ public class SimulatedAnealling
          {
             int[] posi = { i, jogo.get(i) };
             int[] posj = { j, jogo.get(j) };
-
+            
             int[] delta = { Math.abs(posi[0] - posj[0]), Math.abs(posi[1] - posj[1]) };
-
+            // diagonal || linha || coluna
             if (delta[0] == delta[1] || posi[0] == posj[0] || posi[1] == posj[1])
             {
                peso += 1;
@@ -128,27 +129,36 @@ public class SimulatedAnealling
       
       List<Integer> ta = IntStream.rangeClosed(1, 10000).boxed().collect(Collectors.toList());
       List<Double> T = new ArrayList<Double>();
-
+      
+      // funcao de reducao da temperatura
       for (Integer a : ta)
       {
          T.add(1 / Math.sqrt(a));
       }
-
+      long interacoes = 0L;
       for (Double t : T)
       {
+         interacoes++;
          int pesoAtual;
          int pesoVizinho;
-
+         
+         // pega um vizinho escolhendo duas colunas aleatorias e trocando elas
          List<Integer> vizinho = SimulatedAnealling.getVizinho(jogo);
-
+         
+         //para cada rainha na mesma coluna, linha e diagonais o peso do jogo aumenta
          pesoAtual = SimulatedAnealling.heuristica(jogo);
          pesoVizinho = SimulatedAnealling.heuristica(vizinho);
-
-         if (t <= 0.005 || pesoAtual == 0)
+         
+         // condicoes de parada 
+         // o t é uma temperatura que para nós é uma solução boa OU pode ter achado um tabuleiro com peso 0
+         if (t <= 0.016 || pesoAtual == 0)
          {
             break;
          }
-
+         
+         /* parte do algoritmo para fugir de máximos locais, usando a função e um numero aleatório(rand) entre 0 e 1 e verificando
+         *  se tal número é menor do que o número aleatório gerado.
+         */  
          probability = Math.exp(pesoAtual - pesoVizinho / t);
          double rand = Math.random();
          
@@ -156,7 +166,7 @@ public class SimulatedAnealling
          {
             jogo = vizinho;
          }
-         else if(rand <= probability)
+         else if(rand <= probability)   
          {
             jogo = vizinho;
          }
@@ -164,7 +174,7 @@ public class SimulatedAnealling
          System.out.println("============================");
          SimulatedAnealling.imprimir(jogo);
       }
-
+      System.out.println("NUMERO DE ITERAÇÕES: " + interacoes);
    }
 
 }
