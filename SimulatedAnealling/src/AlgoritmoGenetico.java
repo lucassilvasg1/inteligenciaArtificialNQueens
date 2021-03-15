@@ -314,7 +314,7 @@ public class AlgoritmoGenetico
       
       while(true)
       {
-         System.out.println("Peso" + pesos.get(0).getPeso() + "para o melhor indivíduo");
+         System.out.println("Peso" + pesos.get(0).getPeso() + "para o melhor indivÃ­duo");
          System.out.println("Continuar? (S/N)");
          Scanner sc = new Scanner(System.in);
          if(sc.next().toUpperCase().equalsIgnoreCase("S"))
